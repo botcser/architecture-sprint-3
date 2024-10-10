@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-db1-data
+spec:
+  selector:
+    app: db1-data
+  ports:
+    - protocol: TCP
+      port: 27020
+      targetPort: 27020
+  type: ClusterIP
