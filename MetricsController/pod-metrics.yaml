@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-metrics-controller
+  labels:
+    environment: dev
+    app: metrics-controller
+spec:
+  containers:
+  - name: metrics-controller-container
+    image: botcser/metrics-controller
+    ports:
+    - name: http
+      containerPort: 27111
