@@ -232,5 +232,5 @@ http://localhost:32222/api/Device/InitRepository/svc-db1-data:27020?databaseName
 При миникубе нужно сделать перенаправление портов:
 kubectl port-forward svc/svc-device-controller 32222:27222
 kubectl port-forward svc/svc-metrics-controller 32111:27111
-
+...
 
