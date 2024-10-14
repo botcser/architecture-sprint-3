@@ -1,0 +1,51 @@
+@startuml
+
+ 
+entity User  {
+  *UserId: unsigned int(32)
+  *Token: varchar(64)
+  nPaymentId: unsigned int(32)
+  nDeviceIds(Json): text
+  nTaskIds(Json): text
+  nSubscription(Json): text
+  *MetaInfo (Address, Birthday...)(zipped Json): varbinary(100500)
+  Transactions(Json): text
+}
+
+entity Device {
+  *DeviceId: unsigned int(32)
+  *OwnerUserId: unsigned int(32)
+  *IpPort: varchar(64)
+  *ModuleId: unsigned int(32)
+  *HWID: varchar(64)
+  *Status(Json): text
+  *Params(Json): text
+  Metrics(zipped Json): varbinary(100500)
+  *Address: varchar(64)
+  *Type: tinyint(4)
+  ThirdPartyAPI(Json): text
+}
+
+entity Module {  
+  *ModuleId: unsigned int(32)
+  DeviceIds(Json): text
+  TaskIds(Json): text
+  Interfaces(Json): text
+}
+
+entity Task{  
+  *TaskId: unsigned int(32)
+  *UserId: unsigned int(32)
+  *DeviceId: unsigned int(32)
+  *ModuleId: unsigned int(32)
+  Info: text
+  *Shedule(Json): text
+  *States(zipped Json): varbinary(100500)
+}
+User }o--|| Device
+User }o--|{ Task
+Device ||--o{ Module
+Task |o--|| Device 
+Module }o--|| Task
+
+@enduml

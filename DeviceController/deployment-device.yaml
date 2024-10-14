@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep-device-controller
+  labels:
+    app: dep-device-controller
+spec:
+  replicas: 1  
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate  
+  selector:
+    matchLabels:
+      app: device-controller
+  template:
+    metadata:
+      labels:
+        app: device-controller
+    spec:
+      containers:
+      - name: dep-device-controller-container
+        image: botcser/device-controller
+        ports:
+        - name: http
+          containerPort: 27222

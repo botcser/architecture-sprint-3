@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-device-controller
+  labels:
+    environment: dev
+    app: device-controller
+spec:
+  containers:
+  - name: pod-device-controller-container
+    image: botcser/device-controller
+    ports:
+    - name: http
+      containerPort: 27222

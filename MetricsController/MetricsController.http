@@ -1,0 +1,6 @@
+@MetricsController_HostAddress = http://localhost:5009
+
+GET {{MetricsController_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

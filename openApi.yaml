@@ -1,0 +1,181 @@
+openapi: 3.0.3
+info:
+  title: HachEnergyMarketing
+  version: 1.0.11
+paths:
+  /billing/makePay:
+    post:
+      tags:
+        - Billing
+      summary: Покупка подписки
+      operationId: makePay
+      parameters:
+      - name: userid
+        in: query
+        description: ID юзвера
+        schema:
+          type: integer
+          format: int64
+      - name: itemid
+        in: query
+        description: Id предмета
+        schema:
+          type: integer
+          format: int64
+      - name: paymentid
+        in: query
+        description: Id способа оплаты (кошелек)
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'      
+        '400':
+          description: Неверный ввод
+        '500':
+          description: Внутренняя ошибка
+  /billing/getOptions:
+    get:
+      tags:
+        - Billing
+      summary: Обновление доступных способов оплаты
+      operationId: getOptions
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '500':
+          description: Внутренняя ошибка
+  /modulesController/getCommands:
+    get:
+      tags:
+        - ModulesController
+      summary: Обновление доступных комманд
+      operationId: getCommands
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '500':
+          description: Внутренняя ошибка
+  /ModulesController/GetModules:
+    get:
+      tags:
+        - ModulesController
+      summary: Позволяет узнать доступные модули
+      operationId: getModules
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '500':
+          description: Внутренняя ошибка
+  /ModulesController/{command}:
+    post:
+      tags:
+        - ModulesController
+      summary: Выполняет команду над устройством
+      operationId: command
+      parameters:
+      - name: command
+        in: path
+        description: имя команды
+        schema:
+          type: string
+        required:
+          true
+      - name: userid
+        in: query
+        description: Id юзера
+        schema:
+          type: integer
+          format: int64
+      - name: deviceid
+        in: query
+        description: Id устройства
+        schema:
+          type: integer
+          format: int64     
+      - name: params
+        in: query
+        description: структура данных об настройках устроства
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Params'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceResponse'       
+        '400':
+          description: Неверный ввод
+        '404':
+          description: устройство не найдено        
+        '500':
+          description: Внутренняя ошибка          
+components:
+  schemas:
+    Transaction:
+      type: object
+      properties:
+        userid:
+          type: integer
+          format: int64
+          example: 312
+        itemid:
+          type: integer
+          format: int64
+          example: 123
+        payload:
+          type: string
+          example: "2L32KFCVK123KVSD"       
+        subscription:
+          type: string
+          example: type:pro
+    Params:
+      type: object
+      properties:
+        temperature:
+          type: integer
+          format: int64
+          example: 36
+        datetime:
+          type: string
+          format: date-time
+          example: now
+    DeviceResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        metrics:
+          type: string
+          format: json  
+          example: temperature:23
+        status:
+          type: string        
+        error:
+          type: string

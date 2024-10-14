@@ -1,0 +1,82 @@
+@startuml
+!include <C4/C4_Container>
+!include <C4/C4_Deployment>
+!include <C4/C4_Component>
+!include <archimate/Archimate>
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/Archimate-PlantUML/master/Archimate.puml
+
+Person(UserAlias, "User")
+
+System(APIAlias, "Web API", "Consul, OAuthJWTController")
+
+System_Boundary(c1, "HachEnegryMarketing"){
+System(ShedulerAlias, "Sheduler", "OAuthJWTVerifier, ScheduleController(RabbitMQ), Repository Layer")
+System(ModulesControllerAlias, "ModulesController", "EnergyModule, HeatModule, BigDoorModule, SomeElseShitModule, ThirdPartyController, Repository Layer")
+System(MonitorAlias, "Monitor", "OAuthJWTVerifier, VideoViewController, ThirdPartyController, Repository Layer")
+System(NotifyAlias, "Notify", "OAuthJWTVerifier, NotifyController, ThirdPartyController, Repository Layer")
+System(BillingAlias, "Billing", "PaymentController, Verifier")
+System(ProfileAlias, "Profile", "AuthController, UserController, PaymentController, Repository Layer")
+ContainerDb(BDAlias, "BD Gateway", "Redis, MongoDB Repl, Repository Layer")
+ContainerDb(BDMediaAlias, "BDMedia Gateway", "MongoDB Shard Hash, Repository Layer")
+}
+
+Rel(UserAlias, APIAlias, "[Observer]")
+
+System_Ext(ThirdPartyAPIAlias, "Third Party API")
+System_Ext(BankSystemAlias, "Bank System")
+
+Rel_D(MonitorAlias, ThirdPartyAPIAlias, "[Monitor, Config]")
+BiRel(MonitorAlias, BDMediaAlias, "[Data]")
+BiRel(MonitorAlias, BDAlias, "[Data]")
+
+BiRel_U(NotifyAlias, APIAlias, "[Config]")
+Rel_U(NotifyAlias, UserAlias, "[Notify (mb ThirdParty)]")
+Rel_D(NotifyAlias, ThirdPartyAPIAlias, "[Metrics]")
+BiRel(NotifyAlias, BDAlias, "[Data]")
+
+Rel(APIAlias, MonitorAlias, "[Monitor, Config]")
+Rel(APIAlias, ShedulerAlias, "[Plan]")
+Rel(APIAlias, ProfileAlias, "[Buy]")
+
+Rel_D(ModulesControllerAlias, ThirdPartyAPIAlias, "[Control, Metrics]")
+BiRel(ShedulerAlias, BDAlias, "[Data]")
+BiRel(ShedulerAlias, ModulesControllerAlias, "[Plan]")
+BiRel(ModulesControllerAlias, BDAlias, "[Data]")
+
+BiRel(ProfileAlias, BillingAlias, "[Processes payments]")
+BiRel(ProfileAlias, BDAlias, "[Data]")
+
+Rel_D(BillingAlias, BankSystemAlias, "[Processes payments]")
+
+Application_Service(ModulesManager, "ModulesManager", true) {
+ WithoutPropertyHeader()
+ AddProperty("ModulesManager", "GetAllModules(),")
+ AddProperty("", "RegisterModule()")
+ AddProperty("", "UnRegisterModule()")
+ AddProperty("", "MakeOperationModule()...")
+ AddProperty("RepositoryLayer", "BDOperations...")
+ Deployment_Node(ModulesController, "Modules Controller")
+
+ Business_Service("EnergyModule", "Energy Module\n[Register, Operations]\n[ThirdPartyOperations]")
+ Business_Service("HeatModule", "Heat Module\n[Register, Operations]\n[ThirdPartyOperations]")
+ Business_Service("BigDoorModule", "BigDoor Module\n[Register, Operations]\n[ThirdPartyOperations]")
+}
+
+Application_Service(Sheduler, "Sheduler", true) {
+ WithoutPropertyHeader()
+ AddProperty("OAuth/JWT Verifier", "Verify(),")
+ AddProperty("", "SyncWithDB()")
+ Deployment_Node(OAuthJWTVerifier, "OAuth/JWT Verifier")
+
+ WithoutPropertyHeader()
+ AddProperty("ScheduleController", "OAuth/JWTValidate()")
+ AddProperty("", "PresentModules")
+ AddProperty("", "RepositorySyncData()")
+ AddProperty("ModulesManagerProxy", "UpdateEvailableModules(),")
+ AddProperty("", "TaskOperation()...")
+ Deployment_Node(ScheduleController, "Schedule Controller")
+}
+
+Rel(ScheduleController, OAuthJWTVerifier, "[OAuthJWTCheck]")
+Rel_L(ScheduleController, ModulesController, "[Plan]")
+@enduml

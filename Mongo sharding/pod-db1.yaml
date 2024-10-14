@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-db1-data
+  labels:
+    environment: dev
+    app: db1-data
+spec:
+  containers:
+  - name: db1-data-container
+    image: botcser/db1-shard1
+    ports:
+    - name: mongodb
+      containerPort: 27020
