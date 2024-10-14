@@ -38,7 +38,7 @@ Rel(APIAlias, MonitorAlias, "[Monitor, Config]")
 Rel(APIAlias, ShedulerAlias, "[Plan]")
 Rel(APIAlias, ProfileAlias, "[Buy]")
 
-Rel_D(ShedulerAlias, ThirdPartyAPIAlias, "[Control, Metrics]")
+Rel_D(ModulesControllerAlias, ThirdPartyAPIAlias, "[Control, Metrics]")
 BiRel(ShedulerAlias, BDAlias, "[Data]")
 BiRel(ShedulerAlias, ModulesControllerAlias, "[Plan]")
 BiRel(ModulesControllerAlias, BDAlias, "[Data]")
