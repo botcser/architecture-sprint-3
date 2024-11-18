@@ -1,0 +1,42 @@
+@startuml
+!include <C4/C4_Container>
+!include <C4/C4_Deployment>
+!include <C4/C4_Component>
+!include <archimate/Archimate>
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/Archimate-PlantUML/master/Archimate.puml
+
+
+AddRelTag("dashed", $lineStyle = DashedLine())
+
+System_Boundary(ModulesManager, "Modules Manager"){
+System(ModulesController, "ModulesController", "Providing device services using modules: detecting devices, getting a list of possible commands and executing them")
+System(EnergyModule, "EnergyModule", "")
+System(HeatModule, "HeatModule", "")
+System(BigDoorModule, "BigDoorModule", "")
+System(ModulesRepositoryLayer, "Repository Layer", "")
+System(ModulesThirdPartyAPI, "ThirdParty API", "")
+}
+
+Rel(BigDoorModule, ModulesController, "[Register]", $tags="dashed")
+Rel(ModulesController, BigDoorModule, "[Perform Operation]", $tags="dashed")
+Rel(EnergyModule, ModulesController, "[Register]", $tags="dashed")
+Rel(ModulesController, EnergyModule, "[Perform Operation]", $tags="dashed")
+Rel(HeatModule, ModulesController, "[Register]", $tags="dashed")
+Rel(ModulesController, HeatModule, "[Perform operation]")
+Rel_D(ModulesController, ModulesThirdPartyAPI, "[Perform Operation]", $tags="dashed")
+Rel_D(ModulesThirdPartyAPI, ModulesController, "[Data]", $tags="dashed")
+BiRel(ModulesController, ModulesRepositoryLayer, "[Data]", $tags="dashed")
+
+System_Boundary(Sheduler, "Sheduler"){
+System(ShedulerManager, "Schedule Controller", "Planning and task management")
+System(ShedulerWebApi, "Web Api", "")
+System(ShedulerRepositoryLayer, "Repository Layer", "")
+System(OAuthJWTVerifier, "OAuth/JWT Verifier", "")
+}
+
+Rel_D(ShedulerWebApi, ShedulerManager, "[Plan]", $tags="dashed")
+BiRel(ShedulerManager, ShedulerRepositoryLayer, "[Data]", $tags="dashed")
+Rel(ShedulerManager, OAuthJWTVerifier, "[OAuthJWTCheck]", $tags="dashed")
+Rel_L(ShedulerManager, ModulesController, "[Shedule]", $tags="dashed")
+
+@enduml

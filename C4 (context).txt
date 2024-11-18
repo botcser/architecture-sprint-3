@@ -1,0 +1,23 @@
+@startuml
+!include <C4/C4_Container>
+!include <C4/C4_Deployment>
+!include <C4/C4_Component>
+!include <archimate/Archimate>
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/Archimate-PlantUML/master/Archimate.puml
+
+
+AddRelTag("dashed", $lineStyle = DashedLine())
+
+Person(UserAlias, "User")
+System(APIAlias, "Web API", "Consul, OAuthJWTController")
+System(SmartHome, "SmartHome", "Heating control and temperature monitoring")
+System_Ext(ThirdPartyAPIAlias, "Third Party API")
+System_Ext(BankSystemAlias, "Bank System")
+
+Rel(UserAlias, APIAlias, "[Observe]", $tags="dashed")
+Rel_D(SmartHome, ThirdPartyAPIAlias, "[Monitor, Config, Control, Metrics]", $tags="dashed")
+Rel_U(SmartHome, UserAlias, "[Notify]", $tags="dashed")
+Rel(APIAlias, SmartHome, "[Monitor, Config, Plan, Buy, Observe]", $tags="dashed")
+Rel_D(SmartHome, BankSystemAlias, "[Processes payments]", $tags="dashed")
+
+@enduml
